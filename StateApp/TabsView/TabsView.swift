@@ -14,24 +14,35 @@ struct TabsViewState {
     var bus: State = .bus(nil)
     var selectedTab: Tab = .all
 }
+extension TabsViewState {
+    static var mock = TabsViewState(
+        all: .all,
+        avia: .avia(.content(.init(
+            price: .init(value: 10, currency: .rub),
+            duration: .init(hours: 10, minutes: 10)
+        ))),
+        train: .train(.noTicket),
+        bus: .bus(nil),
+        selectedTab: .avia
+    )
+}
+
 
 struct TabsView: View {
     @State var state: TabsViewState
 
     var body: some View {
         HStack {
-            HStack {
-                ForEach(
-                    [state.all, state.avia, state.train, state.bus],
-                    id: \.tab
-                ) { tabViewState in
-                    TabView(state: .init(
-                        kind: .init(state: tabViewState),
-                        isSelected: state.selectedTab == tabViewState.tab
-                    ))
-                }
-                Spacer()
+            ForEach(
+                [state.all, state.avia, state.train, state.bus],
+                id: \.tab
+            ) { tabViewState in
+                TabView(state: .init(
+                    kind: .init(state: tabViewState),
+                    isSelected: state.selectedTab == tabViewState.tab
+                ))
             }
+            Spacer()
         }
     }
 }
@@ -41,17 +52,8 @@ struct TabsView_Previews: PreviewProvider {
         ZStack {
             Color(hex: 0xf3f4f9)
                 .ignoresSafeArea()
-            TabsView(state: .init(
-                all: .all,
-                avia: .avia(.content(.init(
-                    price: .init(value: 10, currency: .rub),
-                    duration: .init(hours: 10, minutes: 10)
-                ))),
-                train: .train(.noTicket),
-                bus: .bus(nil),
-                selectedTab: .avia
-            ))
-            .padding(16)
+            TabsView(state: .mock)
+                .padding(16)
         }
     }
 }
