@@ -6,7 +6,7 @@
 //
 
 extension TabsViewState {
-    enum Tab {
+    enum TabID {
         case all, avia, train, bus
     }
     enum Style {
@@ -21,7 +21,7 @@ extension TabsViewState {
         let price: Money
         let duration: Duration
     }
-    enum State {
+    enum Tab {
         case all
         case avia(ContentStatus?)
         case train(ContentStatus?)

@@ -8,25 +8,23 @@
 import SwiftUI
 
 struct TabsViewState {
-    var all: State = .all
-    var avia: State = .avia(nil)
-    var train: State = .train(nil)
-    var bus: State = .bus(nil)
-    var selectedTab: Tab = .all
+    var avia: ContentStatus?
+    var train: ContentStatus?
+    var bus: ContentStatus?
+    var selectedTab: TabID = .all
 }
+
 extension TabsViewState {
     static var mock = TabsViewState(
-        all: .all,
-        avia: .avia(.content(.init(
+        avia: .content(.init(
             price: .init(value: 10, currency: .rub),
             duration: .init(hours: 10, minutes: 10)
-        ))),
-        train: .train(.noTicket),
-        bus: .bus(nil),
+        )),
+        train: .noTicket,
+        bus: nil,
         selectedTab: .avia
     )
 }
-
 
 struct TabsView: View {
     @State var state: TabsViewState
@@ -34,7 +32,7 @@ struct TabsView: View {
     var body: some View {
         HStack {
             ForEach(
-                [state.all, state.avia, state.train, state.bus],
+                [TabsViewState.Tab.all, .avia(state.avia), .train(state.train), .bus(state.bus)],
                 id: \.tab
             ) { tabViewState in
                 TabView(state: .init(
@@ -60,7 +58,7 @@ struct TabsView_Previews: PreviewProvider {
 
 // Mapping
 private extension TabViewState.Kind {
-    init(state: TabsViewState.State) {
+    init(state: TabsViewState.Tab) {
         switch state {
         case .all:
             self = .static(icon: state.tab.icon)
@@ -78,7 +76,7 @@ private extension TabViewState.Kind {
 private extension TabViewState.Kind.ContentState {
     init(
         contentStatus: TabsViewState.ContentStatus?,
-        tab: TabsViewState.Tab
+        tab: TabsViewState.TabID
     ) {
         switch contentStatus {
         case .content(let content):
@@ -95,7 +93,7 @@ private extension TabViewState.Kind.ContentState {
     }
 }
 
-private extension TabsViewState.Tab {
+private extension TabsViewState.TabID {
     var icon: String {
         switch self {
         case .all:
@@ -110,8 +108,8 @@ private extension TabsViewState.Tab {
     }
 }
 
-private extension TabsViewState.State {
-    var tab: TabsViewState.Tab {
+private extension TabsViewState.Tab {
+    var tab: TabsViewState.TabID {
         switch self {
         case .all:
             return .all
